@@ -1,0 +1,29 @@
+AI agents can now reason and trigger on-chain financial actions.
+But before an agent places a trade, we need a safety layer that can inspect the intent, bind evidence, block unsafe execution, and produce an auditable proof.
+
+InjectiveLens Agent Guard is a pre-execution safety and proof layer for autonomous AI trading agents on Injective.
+It does not hold private keys, sign transactions, transfer funds, or place orders.
+It reviews the action before execution.
+
+Here the agent receives a natural-language trading request:
+open a ten times long INJ perpetual position using sixty percent of available margin.
+The guard parses the intent, reads configured Injective evidence sources and disclosed demo fixtures, then evaluates whether this action should be allowed before execution.
+
+The result is block.
+The request exceeds the autonomous agent policy because ten times leverage and sixty percent margin usage are too risky for a default agent execution path.
+The decision is bound to six evidence items, and an assessment hash is generated.
+
+The guard does not only reject the action.
+It explains why: leverage risk, margin usage risk, liquidation distance risk, and evidence coverage gap.
+Then it simulates a safer alternative: reducing the trade to three times leverage and fifteen percent margin, while still requiring human confirmation before execution.
+
+The audit tab shows the execution boundary.
+The guard allows read-only inspection, safer trade simulation, assessment hash recording, and verification.
+It blocks order placement, auto-signing, fund transfers, and LLM-generated transaction execution.
+The LLM can explain the decision, but deterministic policy enforces the boundary.
+
+Finally, the system generates an assessment hash.
+Recording and verification require explicit confirmation, so the app never silently signs or places an order.
+This makes the agent action reviewable before it reaches execution.
+
+InjectiveLens makes autonomous AI trading agents safer by adding a verifiable guard layer before on-chain execution.
