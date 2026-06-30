@@ -1,0 +1,731 @@
+openapi: 3.1.0
+info:
+  title: InjectiveLens Agent Guard API
+  version: 0.1.0-day1
+  description: >
+    Day 1 frozen API contract for the InjectiveLens Agent Guard MVP.
+    P0 is read-only, simulation-only, and proof-only. No endpoint places
+    orders, transfers funds, requests private keys, or auto-signs transactions.
+servers:
+  - url: http://localhost:8000
+    description: Local development service
+tags:
+  - name: intent
+  - name: injective
+  - name: risk
+  - name: simulation
+  - name: proof
+  - name: history
+  - name: agent
+paths:
+  /api/injective/preflight:
+    post:
+      tags: [risk]
+      summary: Run the full Injective trading pre-flight assessment.
+      operationId: runInjectivePreflight
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PreflightRequest"
+      responses:
+        "200":
+          description: Pre-flight assessment completed or partially completed.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PreflightAssessment"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "503":
+          $ref: "#/components/responses/SourceUnavailable"
+  /api/intent/parse:
+    post:
+      tags: [intent]
+      summary: Parse a natural-language trading request into a structured trade intent.
+      operationId: parseTradeIntent
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt]
+              properties:
+                prompt:
+                  type: string
+                  minLength: 4
+                  maxLength: 1000
+                parserMode:
+                  type: string
+                  enum: [deterministic, llm_assisted]
+                  default: deterministic
+      responses:
+        "200":
+          description: Parsed trade intent.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/IntentParseResult"
+  /api/injective/account:
+    get:
+      tags: [injective]
+      summary: Return Injective account and subaccount risk context.
+      operationId: getInjectiveAccountState
+      parameters:
+        - $ref: "#/components/parameters/InjectiveAddress"
+        - $ref: "#/components/parameters/SubaccountId"
+      responses:
+        "200":
+          description: Account state evidence.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AccountState"
+  /api/injective/market:
+    get:
+      tags: [injective]
+      summary: Return market snapshot for a spot or perpetual market.
+      operationId: getInjectiveMarketSnapshot
+      parameters:
+        - name: market
+          in: query
+          required: true
+          schema:
+            type: string
+          example: INJ-PERP
+        - name: network
+          in: query
+          schema:
+            $ref: "#/components/schemas/InjectiveNetwork"
+      responses:
+        "200":
+          description: Market snapshot evidence.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketSnapshot"
+  /api/injective/positions:
+    get:
+      tags: [injective]
+      summary: Return open positions for a subaccount.
+      operationId: getInjectivePositions
+      parameters:
+        - $ref: "#/components/parameters/SubaccountId"
+        - name: network
+          in: query
+          schema:
+            $ref: "#/components/schemas/InjectiveNetwork"
+      responses:
+        "200":
+          description: Open position evidence.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [network, subaccountId, positions, sourceCoverage]
+                properties:
+                  network:
+                    $ref: "#/components/schemas/InjectiveNetwork"
+                  subaccountId:
+                    type: string
+                  positions:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/OpenPosition"
+                  sourceCoverage:
+                    $ref: "#/components/schemas/SourceCoverage"
+  /api/risk/evaluate-trade:
+    post:
+      tags: [risk]
+      summary: Evaluate a parsed trade intent against Injective evidence.
+      operationId: evaluateTradeRisk
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RiskEvaluationRequest"
+      responses:
+        "200":
+          description: Deterministic trade risk result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RiskDecision"
+  /api/simulation/safer-trade:
+    post:
+      tags: [simulation]
+      summary: Simulate a safer trading alternative. Does not place an order.
+      operationId: simulateSaferTrade
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [assessmentId]
+              properties:
+                assessmentId:
+                  type: string
+                strategy:
+                  type: string
+                  enum: [reduce_leverage, reduce_margin, reduce_notional, close_or_skip]
+                  default: reduce_leverage
+      responses:
+        "200":
+          description: Simulation-only before/after result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SaferTradeSimulation"
+  /api/proof/record:
+    post:
+      tags: [proof]
+      summary: Record an assessment hash on Injective testnet after explicit confirmation.
+      operationId: recordInjectiveAssessment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RecordProofRequest"
+      responses:
+        "202":
+          description: Proof record accepted or queued.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProofRecord"
+  /api/proof/verify:
+    post:
+      tags: [proof]
+      summary: Verify a recorded Injective assessment proof against local assessment hash.
+      operationId: verifyInjectiveAssessment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [assessmentHash, txHash, network]
+              properties:
+                assessmentHash:
+                  type: string
+                txHash:
+                  type: string
+                network:
+                  $ref: "#/components/schemas/InjectiveNetwork"
+      responses:
+        "200":
+          description: Read-only verification result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProofVerification"
+  /api/history/preflight:
+    get:
+      tags: [history]
+      summary: Return recent pre-flight assessments for the current account/subaccount.
+      operationId: getPreflightHistory
+      parameters:
+        - $ref: "#/components/parameters/InjectiveAddress"
+        - $ref: "#/components/parameters/SubaccountId"
+      responses:
+        "200":
+          description: Pre-flight assessment history.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [records]
+                properties:
+                  records:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/HistoryRecord"
+  /api/agent/audit:
+    get:
+      tags: [agent]
+      summary: Return the latest agent decision audit and MCP-style tool trace.
+      operationId: getAgentAudit
+      parameters:
+        - name: assessmentId
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Agent audit trail.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentAudit"
+components:
+  parameters:
+    InjectiveAddress:
+      name: address
+      in: query
+      required: true
+      schema:
+        type: string
+        pattern: "^inj[a-z0-9]{38,}$"
+      example: inj1...
+    SubaccountId:
+      name: subaccountId
+      in: query
+      required: false
+      schema:
+        type: string
+      example: "0x0000000000000000000000000000000000000000000000000000000000000000"
+  responses:
+    BadRequest:
+      description: Invalid request.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+    SourceUnavailable:
+      description: One or more Injective sources are unavailable; missing data is unknown, not safe.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+  schemas:
+    InjectiveNetwork:
+      type: string
+      enum: [injective_testnet, injective_mainnet]
+      default: injective_testnet
+    PreflightRequest:
+      type: object
+      required: [prompt, address, network]
+      properties:
+        prompt:
+          type: string
+          example: Open a 10x long INJ-PERP using 60% of available margin.
+        address:
+          type: string
+          example: inj1...
+        subaccountId:
+          type: string
+        network:
+          $ref: "#/components/schemas/InjectiveNetwork"
+        mode:
+          type: string
+          enum: [demo_scenario, live_read_only]
+          default: demo_scenario
+    IntentParseResult:
+      type: object
+      required: [rawPrompt, tradeIntent, confidence, parserMode, warnings]
+      properties:
+        rawPrompt:
+          type: string
+        tradeIntent:
+          $ref: "#/components/schemas/TradeIntent"
+        confidence:
+          type: number
+          minimum: 0
+          maximum: 1
+        parserMode:
+          type: string
+          enum: [deterministic, llm_assisted, fallback]
+        warnings:
+          type: array
+          items:
+            type: string
+    TradeIntent:
+      type: object
+      required: [market, side, orderType, leverage, marginUsagePct]
+      properties:
+        market:
+          type: string
+          example: INJ-PERP
+        side:
+          type: string
+          enum: [long, short, buy, sell]
+        orderType:
+          type: string
+          enum: [market, limit]
+          default: market
+        notionalUsd:
+          type: number
+          minimum: 0
+        leverage:
+          type: number
+          minimum: 1
+        marginUsagePct:
+          type: number
+          minimum: 0
+          maximum: 100
+        slippageBps:
+          type: number
+          minimum: 0
+        timeInForce:
+          type: string
+          enum: [unspecified, post_only, immediate_or_cancel]
+          default: unspecified
+    AccountState:
+      type: object
+      required: [network, address, balances, sourceCoverage, evidence]
+      properties:
+        network:
+          $ref: "#/components/schemas/InjectiveNetwork"
+        address:
+          type: string
+        subaccountId:
+          type: string
+        balances:
+          type: array
+          items:
+            $ref: "#/components/schemas/BalanceItem"
+        availableMarginUsd:
+          type: number
+        sourceCoverage:
+          $ref: "#/components/schemas/SourceCoverage"
+        evidence:
+          type: array
+          items:
+            $ref: "#/components/schemas/EvidenceItem"
+    BalanceItem:
+      type: object
+      required: [denom, amount]
+      properties:
+        denom:
+          type: string
+        amount:
+          type: string
+        usdValue:
+          type: number
+        source:
+          type: string
+    MarketSnapshot:
+      type: object
+      required: [network, market, markPrice, sourceCoverage, evidence]
+      properties:
+        network:
+          $ref: "#/components/schemas/InjectiveNetwork"
+        market:
+          type: string
+        marketId:
+          type: string
+        markPrice:
+          type: number
+        oraclePrice:
+          type: number
+        spreadBps:
+          type: number
+        fundingRatePct:
+          type: number
+        maxLeverage:
+          type: number
+        sourceCoverage:
+          $ref: "#/components/schemas/SourceCoverage"
+        evidence:
+          type: array
+          items:
+            $ref: "#/components/schemas/EvidenceItem"
+    OpenPosition:
+      type: object
+      required: [market, side, notionalUsd, leverage]
+      properties:
+        market:
+          type: string
+        side:
+          type: string
+          enum: [long, short]
+        notionalUsd:
+          type: number
+        leverage:
+          type: number
+        liquidationPrice:
+          type: number
+        liquidationDistancePct:
+          type: number
+        unrealizedPnlUsd:
+          type: number
+    RiskEvaluationRequest:
+      type: object
+      required: [tradeIntent, accountState, marketSnapshot, positions]
+      properties:
+        tradeIntent:
+          $ref: "#/components/schemas/TradeIntent"
+        accountState:
+          $ref: "#/components/schemas/AccountState"
+        marketSnapshot:
+          $ref: "#/components/schemas/MarketSnapshot"
+        positions:
+          type: array
+          items:
+            $ref: "#/components/schemas/OpenPosition"
+    RiskDecision:
+      type: object
+      required: [decision, riskScore, riskLevel, action, topRisks, allowedActions, blockedActions]
+      properties:
+        decision:
+          type: string
+          enum: [allow, warn, block]
+        riskScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+        riskLevel:
+          type: string
+          enum: [low, moderate, high, critical, unknown]
+        action:
+          type: string
+          example: Block execution and simulate safer trade
+        reason:
+          type: string
+        topRisks:
+          type: array
+          items:
+            $ref: "#/components/schemas/RiskSignal"
+        allowedActions:
+          type: array
+          items:
+            type: string
+        blockedActions:
+          type: array
+          items:
+            type: string
+    RiskSignal:
+      type: object
+      required: [id, title, severity, claim, evidenceIds]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        severity:
+          type: string
+          enum: [low, moderate, high, critical, unknown]
+        claim:
+          type: string
+        evidenceIds:
+          type: array
+          minItems: 1
+          items:
+            type: string
+    EvidenceItem:
+      type: object
+      required: [id, source, claim, mode, timestamp]
+      properties:
+        id:
+          type: string
+        source:
+          type: string
+          example: Injective indexer
+        claim:
+          type: string
+        mode:
+          type: string
+          enum: [live_read_only, demo_replay, simulated]
+        verification:
+          type: string
+        dataQuality:
+          type: string
+        timestamp:
+          type: string
+          format: date-time
+        rawRef:
+          type: string
+    SourceCoverage:
+      type: object
+      required: [status, unavailableSources, unknownFields]
+      properties:
+        status:
+          type: string
+          enum: [full, partial, unavailable, replay]
+        unavailableSources:
+          type: array
+          items:
+            type: string
+        unknownFields:
+          type: array
+          items:
+            type: string
+        explanation:
+          type: string
+    SaferTradeSimulation:
+      type: object
+      required: [simulationId, before, after, riskDelta, noBroadcast]
+      properties:
+        simulationId:
+          type: string
+        before:
+          $ref: "#/components/schemas/TradeIntent"
+        after:
+          $ref: "#/components/schemas/TradeIntent"
+        riskBefore:
+          type: integer
+        riskAfter:
+          type: integer
+        riskDelta:
+          type: integer
+        explanation:
+          type: string
+        noBroadcast:
+          const: true
+    PreflightAssessment:
+      type: object
+      required: [assessmentId, assessmentHash, request, parseResult, decision, evidence, sourceCoverage, proof]
+      properties:
+        assessmentId:
+          type: string
+        assessmentHash:
+          type: string
+        request:
+          $ref: "#/components/schemas/PreflightRequest"
+        parseResult:
+          $ref: "#/components/schemas/IntentParseResult"
+        decision:
+          $ref: "#/components/schemas/RiskDecision"
+        evidence:
+          type: array
+          items:
+            $ref: "#/components/schemas/EvidenceItem"
+        sourceCoverage:
+          $ref: "#/components/schemas/SourceCoverage"
+        simulation:
+          $ref: "#/components/schemas/SaferTradeSimulation"
+        proof:
+          $ref: "#/components/schemas/ProofRecord"
+    RecordProofRequest:
+      type: object
+      required: [assessmentId, assessmentHash, network, confirmation]
+      properties:
+        assessmentId:
+          type: string
+        assessmentHash:
+          type: string
+        network:
+          $ref: "#/components/schemas/InjectiveNetwork"
+        confirmation:
+          type: string
+          enum: [user_confirmed_record_assessment]
+        idempotencyKey:
+          type: string
+    ProofRecord:
+      type: object
+      required: [status, network]
+      properties:
+        status:
+          type: string
+          enum: [not_recorded, ready_to_record, pending, recorded, verified_matched, verified_mismatch, unavailable]
+        network:
+          $ref: "#/components/schemas/InjectiveNetwork"
+        txHash:
+          type: string
+        explorerUrl:
+          type: string
+          format: uri
+        proofMethod:
+          type: string
+          enum: [tx_memo, cosmwasm_event]
+        recordedAssessmentHash:
+          type: string
+        blockHeight:
+          type: integer
+        message:
+          type: string
+    ProofVerification:
+      type: object
+      required: [status, network, localAssessmentHash]
+      properties:
+        status:
+          type: string
+          enum: [verified_matched, verified_mismatch, not_found, unavailable]
+        network:
+          $ref: "#/components/schemas/InjectiveNetwork"
+        localAssessmentHash:
+          type: string
+        onchainAssessmentHash:
+          type: string
+        txHash:
+          type: string
+        explorerUrl:
+          type: string
+        blockHeight:
+          type: integer
+        message:
+          type: string
+    HistoryRecord:
+      type: object
+      required: [assessmentId, createdAt, decision, riskScore, proofStatus]
+      properties:
+        assessmentId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        prompt:
+          type: string
+        market:
+          type: string
+        decision:
+          type: string
+          enum: [allow, warn, block]
+        riskScore:
+          type: integer
+        topRisks:
+          type: array
+          items:
+            type: string
+        proofStatus:
+          type: string
+        txHash:
+          type: string
+    AgentAudit:
+      type: object
+      required: [assessmentId, decision, allowedActions, blockedActions, toolTrace]
+      properties:
+        assessmentId:
+          type: string
+        decision:
+          $ref: "#/components/schemas/RiskDecision"
+        allowedActions:
+          type: array
+          items:
+            type: string
+        blockedActions:
+          type: array
+          items:
+            type: string
+        llmBoundary:
+          type: string
+        agentIdentity:
+          type: object
+          properties:
+            agentName:
+              type: string
+            agentCardUrl:
+              type: string
+            registryUrl:
+              type: string
+        toolTrace:
+          type: array
+          items:
+            type: object
+            required: [step, tool, status]
+            properties:
+              step:
+                type: integer
+              tool:
+                type: string
+              status:
+                type: string
+                enum: [allow, block, completed, skipped, failed]
+              summary:
+                type: string
+    ErrorResponse:
+      type: object
+      required: [error, message]
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        retryable:
+          type: boolean

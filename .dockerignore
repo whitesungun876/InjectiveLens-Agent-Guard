@@ -1,0 +1,11 @@
+.git
+.venv
+__pycache__
+*.pyc
+.DS_Store
+data/*.json
+frontend/app/node_modules
+frontend/app/dist
+frontend/app/.vercel
+node_modules
+dist

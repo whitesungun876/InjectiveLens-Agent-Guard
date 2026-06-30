@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>InjectiveLens Agent Guard Demo Video</title>
+    <style>
+      :root {
+        --ink: #16211e;
+        --muted: #64746f;
+        --line: #d6e4df;
+        --soft: #f3faf7;
+        --teal: #0c897b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        color: var(--ink);
+        background: linear-gradient(180deg, #f8fcfa, #edf6f3);
+      }
+
+      main {
+        width: min(1180px, calc(100vw - 40px));
+        margin: 0 auto;
+        padding: 38px 0 52px;
+      }
+
+      header {
+        text-align: center;
+        margin-bottom: 28px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(30px, 4vw, 48px);
+        letter-spacing: -0.04em;
+      }
+
+      p {
+        margin: 10px auto 0;
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.5;
+      }
+
+      .video-shell {
+        border: 1px solid var(--line);
+        border-radius: 20px;
+        background: #ffffff;
+        box-shadow: 0 24px 80px rgba(21, 46, 39, 0.16);
+        overflow: hidden;
+      }
+
+      video {
+        display: block;
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        background: #eef6f3;
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 18px;
+        border-top: 1px solid var(--line);
+        background: var(--soft);
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 34px;
+        padding: 7px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: #fff;
+        color: var(--ink);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .pill.primary {
+        color: #075f56;
+        border-color: #b7e0d8;
+        background: #e9f7f4;
+      }
+
+      .links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 24px;
+      }
+
+      a {
+        color: var(--teal);
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>InjectiveLens Agent Guard Demo</h1>
+        <p>
+          A judge-facing walkthrough: natural-language AI trading intent, Injective
+          evidence, BLOCK decision, safer alternative simulation, and testnet proof verification.
+        </p>
+      </header>
+
+      <section class="video-shell">
+        <video
+          src="./injectivelens_demo.webm"
+          poster="./injectivelens_demo_poster.png"
+          controls
+          preload="metadata"
+        >
+          Your browser does not support WebM playback.
+          <a href="./injectivelens_demo.webm">Open the video file</a>.
+        </video>
+        <div class="meta">
+          <span class="pill primary">Injective testnet · injective-888</span>
+          <span class="pill">Pre-execution guard</span>
+          <span class="pill">Assessment proof ready</span>
+          <span class="pill">Safer alternative: 3x · 15% margin</span>
+          <span class="pill">No private key · no auto-sign · no order placement</span>
+        </div>
+      </section>
+
+      <nav class="links" aria-label="Demo links">
+        <a href="/">Open Azure app</a>
+        <a href="./injectivelens_demo.webm">Open video file</a>
+      </nav>
+    </main>
+  </body>
+</html>

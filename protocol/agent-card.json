@@ -1,0 +1,66 @@
+{
+  "schemaVersion": "a2a.agent_card.v1",
+  "id": "injectivelens-agent-guard-demo",
+  "name": "InjectiveLens Agent Guard",
+  "version": "0.9.0",
+  "description": "Blocks high-risk AI trading actions before execution, binds the decision to evidence, simulates a safer trade, and verifies an assessment proof.",
+  "url": "http://127.0.0.1:8765",
+  "provider": {
+    "name": "InjectiveLens",
+    "url": "http://127.0.0.1:8765"
+  },
+  "chain": {
+    "chainId": "injective-888",
+    "networkName": "Injective testnet"
+  },
+  "defaultInputModes": [
+    "application/json"
+  ],
+  "defaultOutputModes": [
+    "application/json"
+  ],
+  "skills": [
+    {
+      "id": "preflight_trade_action",
+      "name": "Pre-flight Trade Action",
+      "description": "Parse a natural-language trade request and return an allow/warn/block decision with evidence."
+    },
+    {
+      "id": "get_injective_account_state",
+      "name": "Get Injective Account State",
+      "description": "Read account and subaccount context through the configured read-only adapter."
+    },
+    {
+      "id": "get_market_snapshot",
+      "name": "Get Market Snapshot",
+      "description": "Read Injective market context used by the risk decision."
+    },
+    {
+      "id": "get_open_positions",
+      "name": "Get Open Positions",
+      "description": "Read open position context for the requested subaccount."
+    },
+    {
+      "id": "simulate_safer_trade",
+      "name": "Simulate Safer Trade",
+      "description": "Return a lower-risk trade proposal without placing an order."
+    },
+    {
+      "id": "get_latest_assessment",
+      "name": "Get Latest Assessment",
+      "description": "Return the latest persisted assessment and proof status when available."
+    },
+    {
+      "id": "record_assessment_projection",
+      "name": "Record Assessment Projection",
+      "description": "Read-only MCP projection of the proof-recording boundary; it does not mutate chain or local state."
+    }
+  ],
+  "security": {
+    "viewOnly": true,
+    "simulationOnly": true,
+    "realExecutionAllowed": false,
+    "privateKeyRequired": false,
+    "seedPhraseRequired": false
+  }
+}

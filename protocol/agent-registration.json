@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "injectivelens.agent_registration.v1",
+  "agentId": "injectivelens-agent-guard-demo",
+  "name": "InjectiveLens Agent Guard",
+  "version": "0.9.0",
+  "description": "A safety and proof layer before AI agents execute trades on Injective.",
+  "agentURI": "http://127.0.0.1:8765/.well-known/agent-card.json",
+  "serviceURI": "http://127.0.0.1:8765",
+  "network": "injective_testnet",
+  "chainId": "injective-888",
+  "capabilities": [
+    "natural_language_trade_intent_parsing",
+    "injective_account_state_read",
+    "injective_market_snapshot_read",
+    "injective_position_context_read",
+    "pre_trade_risk_decision",
+    "allowed_blocked_action_policy",
+    "simulation_only_safer_trade",
+    "assessment_hash_record_and_verify",
+    "mcp_tool_surface"
+  ],
+  "safety": {
+    "defaultMode": "read_only_simulation_only",
+    "realExecutionAllowed": false,
+    "mcpMode": "read_only_preflight",
+    "claimsRequireEvidence": true,
+    "noPrivateKeyOrSeedPhrase": true,
+    "noOrderPlacement": true
+  },
+  "endpoints": {
+    "agentCard": "http://127.0.0.1:8765/.well-known/agent-card.json",
+    "mcp": "http://127.0.0.1:8765/mcp",
+    "preflight": "http://127.0.0.1:8765/api/injective/preflight",
+    "latestAssessment": "http://127.0.0.1:8765/api/injective/preflight/latest",
+    "history": "http://127.0.0.1:8765/api/history/preflight",
+    "audit": "http://127.0.0.1:8765/api/agent/audit"
+  }
+}

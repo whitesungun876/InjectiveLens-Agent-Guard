@@ -1,0 +1,53 @@
+{
+  "tools": [
+    {
+      "name": "preflight_trade_action",
+      "description": "Parse a trade request and return an InjectiveLens pre-flight assessment.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "get_injective_account_state",
+      "description": "Return account and subaccount context from the selected read-only Injective adapter.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "get_market_snapshot",
+      "description": "Return market evidence from the selected read-only Injective adapter.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "get_open_positions",
+      "description": "Return open position context from the selected read-only Injective adapter.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "simulate_safer_trade",
+      "description": "Return a safer-trade simulation. No order is placed.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "get_latest_assessment",
+      "description": "Return latest persisted assessment and proof status when available.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    },
+    {
+      "name": "record_assessment_projection",
+      "description": "Return proof-recording instructions. MCP P0 stays read-only and does not mutate state.",
+      "annotations": {
+        "readOnlyHint": true
+      }
+    }
+  ]
+}

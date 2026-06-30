@@ -1,0 +1,15 @@
+.env
+.DS_Store
+
+__pycache__/
+*.py[cod]
+.venv/
+
+frontend/app/node_modules/
+frontend/app/dist/
+frontend/app/.vite/
+frontend/app/.vercel/
+
+data/*.json
+node_modules/
+dist/
