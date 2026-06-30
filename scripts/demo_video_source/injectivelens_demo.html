@@ -322,97 +322,97 @@
     </main>
 
     <script>
-      const totalMs = 142000;
+      const totalMs = 160000;
       const scenes = [
         {
           at: 0,
           shot: 0,
           tag: "Problem",
-          headline: "AI agents can trade on-chain. They need a guardrail first.",
+          headline: "AI agents can now trigger on-chain financial actions.",
           copy:
-            "InjectiveLens checks a natural-language trading intent before it can reach signing or order placement.",
-          bullets: ["No private key custody", "No automatic signing", "No default order placement"],
+            "Before an agent places a trade, it needs a safety layer that can inspect intent, bind evidence, block unsafe execution, and produce an auditable proof.",
+          bullets: ["Inspect the intent", "Bind evidence", "Block unsafe execution", "Create reviewable proof"],
           callout:
-            "Natural language request: “Open a 10x long INJ-PERP using 60% of available margin.”",
-          caption: "0:00 — AI trading agents need safety before execution."
+            "Problem: autonomous agents are moving closer to real financial execution paths.",
+          caption: "0:00 — AI agents need a pre-execution safety layer."
         },
         {
-          at: 18000,
+          at: 15000,
+          shot: 0,
+          tag: "Positioning",
+          headline: "InjectiveLens is a guard layer, not a trading bot.",
+          copy:
+            "It reviews the action before execution. It does not hold private keys, sign transactions, transfer funds, or place orders.",
+          bullets: ["Pre-execution review", "Read-only evidence", "No private-key custody", "No default order placement"],
+          callout: "InjectiveLens Agent Guard: safety and proof before AI agents execute trades on Injective.",
+          caption: "0:15 — Project positioning: a safety and proof layer for autonomous trading agents."
+        },
+        {
+          at: 35000,
           shot: 0,
           tag: "Input",
-          headline: "The user or agent submits a plain-English trade intent.",
+          headline: "The agent receives a natural-language trading request.",
           copy:
-            "The guard parses market, side, leverage, margin usage, notional size, and slippage from the request.",
-          bullets: ["Demo scenario or live testnet mode", "Read-only Injective evidence", "No decision before the check runs"],
-          callout: "Run agent guard check: parse intent, fetch evidence, evaluate policy.",
-          caption: "0:18 — Natural language becomes structured trading intent."
+            "Example: open a 10x long INJ-PERP position using 60% of available margin. The guard parses the request and reads configured Injective evidence sources plus disclosed demo fixtures.",
+          bullets: ["Market: INJ-PERP", "Side: long", "Leverage: 10x", "Margin usage: 60%"],
+          callout: "Run agent guard check: parse intent, fetch evidence, evaluate policy before execution.",
+          caption: "0:35 — Natural language becomes structured trading intent."
         },
         {
-          at: 38000,
+          at: 65000,
           shot: 1,
           tag: "Decision",
           headline: "<span class='danger'>BLOCK</span> high-risk execution before it reaches the exchange path.",
           copy:
-            "The request is scored against leverage, margin usage, liquidation distance, and evidence coverage rules.",
-          bullets: ["Risk score: 95 / 100", "Decision: BLOCK", "Execution: no order placed"],
-          callout: "The agent can inspect evidence and simulate alternatives, but cannot auto-sign or place orders.",
-          caption: "0:38 — Deterministic policy blocks unsafe autonomous execution."
+            "The request exceeds autonomous agent policy: 10x leverage and 60% margin usage are too risky for a default execution path.",
+          bullets: ["Decision: BLOCK", "Risk score: 95 / 100", "Network: Injective testnet", "Evidence: 6 bound"],
+          callout: "The decision is bound to evidence and an assessment hash is generated. No order is placed.",
+          caption: "1:05 — Evidence plus deterministic policy drives the BLOCK decision."
         },
         {
-          at: 60000,
-          shot: 1,
-          tag: "Safer action",
-          headline: "The guard proposes a safer trade instead of just saying no.",
-          copy:
-            "High leverage and margin usage are reduced into a human-reviewed alternative before any execution path.",
-          bullets: ["Before: 10x leverage, 60% margin", "After: 3x leverage, 15% margin", "Human confirmation still required"],
-          callout: "Safer alternative simulated: 3x leverage, 15% available margin, no broadcast.",
-          caption: "1:00 — Safer alternative simulation turns BLOCK into an actionable review path."
-        },
-        {
-          at: 82000,
+          at: 95000,
           shot: 2,
           tag: "Evidence",
-          headline: "Every risk claim is bound to evidence IDs.",
+          headline: "The guard explains why and simulates a safer alternative.",
           copy:
-            "The Evidence tab shows account context, market source, mark/oracle price, funding, policy threshold, and proof state.",
-          bullets: ["E1 account", "E2 market source", "E5 guard policy", "E6 assessment/proof record"],
-          callout: "Evidence is human-readable first, with source, adapter, timestamp, and data quality disclosed.",
-          caption: "1:22 — Evidence binding makes the decision auditable."
+            "It identifies leverage risk, margin usage risk, liquidation distance risk, and evidence coverage gaps, then proposes a lower-risk path.",
+          bullets: ["Before: 10x leverage", "Before: 60% margin", "After: 3x leverage", "After: 15% margin with human confirmation"],
+          callout: "Evidence IDs make each risk claim traceable: E1 account, E2 market, E5 policy, E6 assessment proof.",
+          caption: "1:35 — The system rejects unsafe execution and offers a safer review path."
         },
         {
-          at: 104000,
+          at: 120000,
           shot: 3,
           tag: "Audit",
-          headline: "The audit view shows the agent decision loop.",
+          headline: "The audit tab shows the execution boundary.",
           copy:
-            "Reviewers can see the high-level phases first, then expand the technical trace only when needed.",
-          bullets: ["Parse intent", "Bind Injective evidence", "Evaluate risk and block", "Generate assessment hash"],
-          callout: "Execution Boundary: review/proof actions stay allowed; order placement and auto-signing stay blocked.",
-          caption: "1:44 — Agentic loop: parse, evidence, policy, simulation, proof."
+            "The LLM can explain the decision, but deterministic policy enforces what the agent can and cannot do.",
+          bullets: ["Allowed: inspect evidence", "Allowed: simulate safer trade", "Allowed: record and verify assessment proof", "Blocked: place order, auto-sign, transfer funds"],
+          callout: "Agent loop: parse intent, bind evidence, evaluate risk, block unsafe execution, generate assessment hash.",
+          caption: "2:00 — Allowed review actions stay separate from blocked execution actions."
         },
         {
-          at: 124000,
+          at: 145000,
           shot: 4,
           tag: "Proof",
-          headline: "The proof verifies the assessment record, not trade profitability.",
+          headline: "The assessment hash makes the review auditable.",
           copy:
-            "The assessment hash can be anchored to an Injective testnet proof transaction and verified against the recorded hash.",
-          bullets: ["Assessment hash generated", "Injective testnet proof anchor", "Verify recorded hash matches"],
+            "Recording and verification require explicit confirmation, so the app never silently signs, places an order, or pretends a review is execution.",
+          bullets: ["Assessment hash generated", "Proof recording requires confirmation", "No silent signing", "No order broadcast"],
           callout:
-            "Proof scope is explicit: this verifies the guard assessment record, not execution safety or trade outcome.",
-          caption: "2:04 — Proof of assessment gives reviewers and agents a verifiable record."
+            "Proof scope: this verifies the guard assessment record only, not trade profitability, execution safety, or wallet outcome.",
+          caption: "2:25 — Proof of assessment, not proof of trade execution."
         },
         {
-          at: 138000,
+          at: 156000,
           shot: 1,
           tag: "Close",
           headline: "InjectiveLens makes autonomous trading agents safer before execution.",
           copy:
-            "It adds a pre-flight guard, evidence-bound decision, safer-action simulation, and verifiable assessment proof.",
-          bullets: ["Built for Injective AI agent infrastructure", "Live testnet-ready", "Open source and Azure deployed"],
+            "It adds a verifiable guard layer before on-chain execution: pre-flight checks, evidence-bound decisions, safer simulation, and auditable proof.",
+          bullets: ["Built for Injective AI agent infrastructure", "Open source", "Azure deployed", "Ready for hackathon demo"],
           callout: "InjectiveLens Agent Guard — safety and proof before AI agents execute trades on Injective.",
-          caption: "2:18 — A safety and proof layer for AI trading agents on Injective."
+          caption: "2:36 — A verifiable guard layer before autonomous on-chain execution."
         }
       ];
 
