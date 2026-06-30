@@ -105,13 +105,35 @@ small {
 .topbar > div {
   display: grid;
   justify-items: center;
-  gap: 8px;
+  gap: 10px;
 }
 
 .subtitle {
   margin-top: 4px;
   font-size: 17px;
   font-weight: 550;
+}
+
+.topbar-proof-strip {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  max-width: 760px;
+}
+
+.topbar-proof-strip span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid rgba(15, 118, 110, 0.18);
+  border-radius: 999px;
+  color: #52605c;
+  background: rgba(255, 255, 255, 0.62);
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .eyebrow {
@@ -176,11 +198,11 @@ small {
 
 .preflight-card {
   display: grid;
-  gap: 24px;
+  gap: 22px;
   width: 100%;
   max-width: 1240px;
   margin: 0 auto;
-  padding: 32px 36px;
+  padding: 30px 36px;
   border-top: 5px solid var(--teal);
 }
 
@@ -192,8 +214,8 @@ small {
 
 .preflight-grid {
   display: grid;
-  grid-template-columns: minmax(340px, 0.4fr) minmax(520px, 0.6fr);
-  gap: 28px;
+  grid-template-columns: minmax(330px, 0.4fr) minmax(500px, 0.6fr);
+  gap: 26px;
   align-items: start;
 }
 
@@ -201,7 +223,7 @@ small {
 .request-column {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 16px;
 }
 
 .field {
@@ -277,6 +299,7 @@ textarea:focus {
 }
 
 .segmented button {
+  min-width: 0;
   white-space: nowrap;
 }
 
@@ -297,7 +320,7 @@ textarea:focus {
 .live-source-card {
   display: grid;
   gap: 6px;
-  min-height: 124px;
+  min-height: 112px;
   padding: 16px;
   border: 1px solid #b8d3f6;
   border-radius: 12px;
@@ -346,7 +369,7 @@ textarea:focus {
 
 .safety-note {
   max-width: 46ch;
-  padding: 12px 14px;
+  padding: 11px 14px;
   border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--surface-soft);
@@ -357,7 +380,7 @@ textarea:focus {
 
 .primary-action {
   width: min(340px, 100%);
-  min-height: 56px;
+  min-height: 54px;
   color: #fff;
   background: var(--teal);
   box-shadow: 0 16px 28px rgba(15, 118, 110, 0.22);
@@ -407,7 +430,7 @@ textarea:focus {
 
 .nav-row {
   display: block;
-  margin: 24px 0;
+  margin: 22px 0;
 }
 
 .tabs {
@@ -505,7 +528,7 @@ textarea:focus {
 }
 
 .result-summary-strip {
-  grid-template-columns: repeat(7, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
 }
 
 .metric-card {
@@ -919,8 +942,23 @@ textarea:focus {
     padding: 22px 16px;
   }
 
+  h1 {
+    font-size: clamp(30px, 9vw, 42px);
+    line-height: 1.05;
+  }
+
+  .subtitle {
+    max-width: 31ch;
+    font-size: 15px;
+  }
+
+  .topbar-proof-strip {
+    gap: 6px;
+  }
+
   .page {
-    width: min(100% - 20px, 1280px);
+    width: min(100% - 18px, 1280px);
+    margin-top: 24px;
   }
 
   .tabs {
@@ -932,6 +970,56 @@ textarea:focus {
   .hero-card,
   .workflow-card {
     padding: 18px;
+    border-radius: 12px;
+  }
+
+  .preflight-card {
+    gap: 18px;
+  }
+
+  .preflight-heading {
+    gap: 8px;
+  }
+
+  .segmented {
+    grid-template-columns: 1fr;
+  }
+
+  .segmented button {
+    justify-content: flex-start;
+    min-height: 42px;
+    padding: 0 12px;
+    white-space: normal;
+  }
+
+  input,
+  select {
+    min-height: 44px;
+  }
+
+  textarea {
+    min-height: 118px;
+  }
+
+  .status-chips {
+    gap: 8px;
+    order: 5;
+  }
+
+  .status-chips span,
+  .badge {
+    font-size: 11px;
+  }
+
+  .primary-action {
+    min-height: 54px;
+    order: 4;
+  }
+
+  .api-error,
+  .run-feedback,
+  .mode-warning {
+    order: 6;
   }
 
   .workflow-stepper {

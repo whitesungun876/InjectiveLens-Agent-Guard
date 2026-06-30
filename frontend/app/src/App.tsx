@@ -718,6 +718,12 @@ export function App() {
           <p className="eyebrow">Injective Nova build</p>
           <h1>InjectiveLens Agent Guard</h1>
           <p className="subtitle">A safety and proof layer before AI agents execute trades on Injective.</p>
+          <div className="topbar-proof-strip" aria-label="Product safety signals">
+            <span>Injective testnet</span>
+            <span>Read-only evidence</span>
+            <span>Assessment proof</span>
+            <span>No auto execution</span>
+          </div>
         </div>
       </header>
 
