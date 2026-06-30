@@ -1,0 +1,471 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>InjectiveLens Agent Guard Demo</title>
+    <style>
+      :root {
+        --bg: #eff7f4;
+        --surface: #ffffff;
+        --ink: #101a18;
+        --muted: #62736e;
+        --teal: #0f766e;
+        --teal-soft: #e4f7f3;
+        --red: #b42318;
+        --red-soft: #fee8e6;
+        --amber: #a15c07;
+        --amber-soft: #fff4df;
+        --line: #d7e3df;
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        color: var(--ink);
+        background: var(--bg);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+        background:
+          radial-gradient(circle at 78% 0%, rgba(15, 118, 110, 0.2), transparent 430px),
+          linear-gradient(180deg, #f9fcfb 0%, #edf7f4 55%, #e8f1ee 100%);
+      }
+
+      .frame {
+        position: relative;
+        display: grid;
+        grid-template-rows: auto 1fr auto;
+        gap: 22px;
+        width: 1920px;
+        height: 1080px;
+        padding: 48px 72px 44px;
+      }
+
+      .topline {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 32px;
+      }
+
+      .brand {
+        display: grid;
+        gap: 8px;
+      }
+
+      .eyebrow {
+        color: var(--teal);
+        font-size: 14px;
+        font-weight: 900;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 54px;
+        line-height: 0.96;
+        letter-spacing: 0;
+      }
+
+      .subtitle {
+        margin: 0;
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 20px;
+        font-weight: 650;
+      }
+
+      .status-strip {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 10px;
+        max-width: 680px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 36px;
+        padding: 0 14px;
+        border: 1px solid rgba(15, 118, 110, 0.2);
+        border-radius: 999px;
+        color: #39504a;
+        background: rgba(255, 255, 255, 0.75);
+        font-size: 14px;
+        font-weight: 850;
+      }
+
+      .pill.danger {
+        color: var(--red);
+        border-color: #efb8b2;
+        background: var(--red-soft);
+      }
+
+      .stage {
+        position: relative;
+        display: grid;
+        grid-template-columns: 0.83fr 1.17fr;
+        gap: 28px;
+        min-height: 0;
+      }
+
+      .narrative,
+      .product {
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        background: rgba(255, 255, 255, 0.86);
+        box-shadow: 0 28px 90px rgba(16, 26, 24, 0.12);
+        overflow: hidden;
+      }
+
+      .narrative {
+        display: grid;
+        align-content: center;
+        gap: 26px;
+        padding: 46px;
+      }
+
+      .scene-tag {
+        width: fit-content;
+        padding: 9px 12px;
+        border: 1px solid #b9ddd7;
+        border-radius: 999px;
+        color: var(--teal);
+        background: var(--teal-soft);
+        font-size: 14px;
+        font-weight: 900;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .headline {
+        margin: 0;
+        font-size: 58px;
+        line-height: 1;
+        letter-spacing: 0;
+      }
+
+      .headline .danger {
+        color: var(--red);
+      }
+
+      .copy {
+        margin: 0;
+        color: var(--muted);
+        font-size: 24px;
+        line-height: 1.42;
+      }
+
+      .bullets {
+        display: grid;
+        gap: 12px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .bullets li {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        color: #33423e;
+        font-size: 21px;
+        font-weight: 760;
+      }
+
+      .dot {
+        width: 11px;
+        height: 11px;
+        border-radius: 999px;
+        background: var(--teal);
+        box-shadow: 0 0 0 6px var(--teal-soft);
+      }
+
+      .product {
+        position: relative;
+        display: grid;
+        place-items: center;
+        padding: 22px;
+      }
+
+      .screenshot {
+        position: absolute;
+        inset: 22px;
+        width: calc(100% - 44px);
+        height: calc(100% - 44px);
+        object-fit: cover;
+        object-position: top center;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        opacity: 0;
+        transform: scale(0.982) translateY(14px);
+        transition:
+          opacity 700ms ease,
+          transform 900ms cubic-bezier(0.2, 0.8, 0.2, 1);
+      }
+
+      .screenshot.active {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+
+      .product-callout {
+        position: absolute;
+        right: 48px;
+        bottom: 48px;
+        max-width: 520px;
+        padding: 20px 22px;
+        border: 1px solid rgba(15, 118, 110, 0.22);
+        border-radius: 18px;
+        color: #16342f;
+        background: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 18px 48px rgba(16, 26, 24, 0.16);
+        font-size: 20px;
+        font-weight: 850;
+        line-height: 1.35;
+      }
+
+      .footer {
+        display: grid;
+        gap: 12px;
+      }
+
+      .progress-track {
+        height: 8px;
+        border-radius: 999px;
+        background: rgba(15, 118, 110, 0.13);
+        overflow: hidden;
+      }
+
+      .progress {
+        width: 0%;
+        height: 100%;
+        border-radius: inherit;
+        background: linear-gradient(90deg, var(--teal), #1ca995);
+      }
+
+      .caption {
+        min-height: 34px;
+        color: #3a4c47;
+        font-size: 20px;
+        font-weight: 760;
+        text-align: center;
+      }
+
+      .fade {
+        opacity: 0;
+        transform: translateY(10px);
+        transition:
+          opacity 520ms ease,
+          transform 640ms ease;
+      }
+
+      .fade.on {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    </style>
+  </head>
+  <body>
+    <main class="frame">
+      <header class="topline">
+        <div class="brand">
+          <div class="eyebrow">Injective Nova build</div>
+          <h1>InjectiveLens Agent Guard</h1>
+          <p class="subtitle">A pre-execution safety and proof layer before AI agents trade on Injective.</p>
+        </div>
+        <div class="status-strip">
+          <span class="pill">Injective testnet</span>
+          <span class="pill">Read-only evidence</span>
+          <span class="pill">Assessment proof</span>
+          <span class="pill danger">No auto execution</span>
+        </div>
+      </header>
+
+      <section class="stage">
+        <aside class="narrative">
+          <div id="sceneTag" class="scene-tag fade on">Problem</div>
+          <h2 id="headline" class="headline fade on">AI agents can trade on-chain. They need a guardrail first.</h2>
+          <p id="copy" class="copy fade on">
+            InjectiveLens checks a natural-language trading intent before it can reach signing or order placement.
+          </p>
+          <ul id="bullets" class="bullets fade on"></ul>
+        </aside>
+
+        <section class="product">
+          <img class="screenshot active" id="shot0" src="./01-preflight.png" alt="Pre-flight check" />
+          <img class="screenshot" id="shot1" src="./02-overview.png" alt="Overview decision" />
+          <img class="screenshot" id="shot2" src="./03-evidence.png" alt="Evidence bundle" />
+          <img class="screenshot" id="shot3" src="./04-audit.png" alt="Decision audit" />
+          <img class="screenshot" id="shot4" src="./05-proof.png" alt="Proof workflow" />
+          <div id="callout" class="product-callout fade on">
+            Natural language request: “Open a 10x long INJ-PERP using 60% of available margin.”
+          </div>
+        </section>
+      </section>
+
+      <footer class="footer">
+        <div class="progress-track"><div id="progress" class="progress"></div></div>
+        <div id="caption" class="caption">
+          Demo path: intent parsing, Injective evidence, BLOCK decision, safer alternative, proof verification.
+        </div>
+      </footer>
+    </main>
+
+    <script>
+      const totalMs = 142000;
+      const scenes = [
+        {
+          at: 0,
+          shot: 0,
+          tag: "Problem",
+          headline: "AI agents can trade on-chain. They need a guardrail first.",
+          copy:
+            "InjectiveLens checks a natural-language trading intent before it can reach signing or order placement.",
+          bullets: ["No private key custody", "No automatic signing", "No default order placement"],
+          callout:
+            "Natural language request: “Open a 10x long INJ-PERP using 60% of available margin.”",
+          caption: "0:00 — AI trading agents need safety before execution."
+        },
+        {
+          at: 18000,
+          shot: 0,
+          tag: "Input",
+          headline: "The user or agent submits a plain-English trade intent.",
+          copy:
+            "The guard parses market, side, leverage, margin usage, notional size, and slippage from the request.",
+          bullets: ["Demo scenario or live testnet mode", "Read-only Injective evidence", "No decision before the check runs"],
+          callout: "Run agent guard check: parse intent, fetch evidence, evaluate policy.",
+          caption: "0:18 — Natural language becomes structured trading intent."
+        },
+        {
+          at: 38000,
+          shot: 1,
+          tag: "Decision",
+          headline: "<span class='danger'>BLOCK</span> high-risk execution before it reaches the exchange path.",
+          copy:
+            "The request is scored against leverage, margin usage, liquidation distance, and evidence coverage rules.",
+          bullets: ["Risk score: 95 / 100", "Decision: BLOCK", "Execution: no order placed"],
+          callout: "The agent can inspect evidence and simulate alternatives, but cannot auto-sign or place orders.",
+          caption: "0:38 — Deterministic policy blocks unsafe autonomous execution."
+        },
+        {
+          at: 60000,
+          shot: 1,
+          tag: "Safer action",
+          headline: "The guard proposes a safer trade instead of just saying no.",
+          copy:
+            "High leverage and margin usage are reduced into a human-reviewed alternative before any execution path.",
+          bullets: ["Before: 10x leverage, 60% margin", "After: 3x leverage, 15% margin", "Human confirmation still required"],
+          callout: "Safer alternative simulated: 3x leverage, 15% available margin, no broadcast.",
+          caption: "1:00 — Safer alternative simulation turns BLOCK into an actionable review path."
+        },
+        {
+          at: 82000,
+          shot: 2,
+          tag: "Evidence",
+          headline: "Every risk claim is bound to evidence IDs.",
+          copy:
+            "The Evidence tab shows account context, market source, mark/oracle price, funding, policy threshold, and proof state.",
+          bullets: ["E1 account", "E2 market source", "E5 guard policy", "E6 assessment/proof record"],
+          callout: "Evidence is human-readable first, with source, adapter, timestamp, and data quality disclosed.",
+          caption: "1:22 — Evidence binding makes the decision auditable."
+        },
+        {
+          at: 104000,
+          shot: 3,
+          tag: "Audit",
+          headline: "The audit view shows the agent decision loop.",
+          copy:
+            "Reviewers can see the high-level phases first, then expand the technical trace only when needed.",
+          bullets: ["Parse intent", "Bind Injective evidence", "Evaluate risk and block", "Generate assessment hash"],
+          callout: "Execution Boundary: review/proof actions stay allowed; order placement and auto-signing stay blocked.",
+          caption: "1:44 — Agentic loop: parse, evidence, policy, simulation, proof."
+        },
+        {
+          at: 124000,
+          shot: 4,
+          tag: "Proof",
+          headline: "The proof verifies the assessment record, not trade profitability.",
+          copy:
+            "The assessment hash can be anchored to an Injective testnet proof transaction and verified against the recorded hash.",
+          bullets: ["Assessment hash generated", "Injective testnet proof anchor", "Verify recorded hash matches"],
+          callout:
+            "Proof scope is explicit: this verifies the guard assessment record, not execution safety or trade outcome.",
+          caption: "2:04 — Proof of assessment gives reviewers and agents a verifiable record."
+        },
+        {
+          at: 138000,
+          shot: 1,
+          tag: "Close",
+          headline: "InjectiveLens makes autonomous trading agents safer before execution.",
+          copy:
+            "It adds a pre-flight guard, evidence-bound decision, safer-action simulation, and verifiable assessment proof.",
+          bullets: ["Built for Injective AI agent infrastructure", "Live testnet-ready", "Open source and Azure deployed"],
+          callout: "InjectiveLens Agent Guard — safety and proof before AI agents execute trades on Injective.",
+          caption: "2:18 — A safety and proof layer for AI trading agents on Injective."
+        }
+      ];
+
+      const shots = [...document.querySelectorAll(".screenshot")];
+      const sceneTag = document.getElementById("sceneTag");
+      const headline = document.getElementById("headline");
+      const copy = document.getElementById("copy");
+      const bullets = document.getElementById("bullets");
+      const callout = document.getElementById("callout");
+      const caption = document.getElementById("caption");
+      const progress = document.getElementById("progress");
+      const fadeTargets = [sceneTag, headline, copy, bullets, callout];
+
+      let activeIndex = -1;
+      let startedAt = 0;
+
+      function renderScene(scene) {
+        fadeTargets.forEach((target) => target.classList.remove("on"));
+        setTimeout(() => {
+          sceneTag.textContent = scene.tag;
+          headline.innerHTML = scene.headline;
+          copy.textContent = scene.copy;
+          bullets.innerHTML = scene.bullets
+            .map((item) => `<li><span class="dot"></span><span>${item}</span></li>`)
+            .join("");
+          callout.textContent = scene.callout;
+          caption.textContent = scene.caption;
+          shots.forEach((shot, index) => shot.classList.toggle("active", index === scene.shot));
+          fadeTargets.forEach((target) => target.classList.add("on"));
+        }, 260);
+      }
+
+      function tick() {
+        const elapsed = performance.now() - startedAt;
+        const nextIndex = scenes.findLastIndex((scene) => elapsed >= scene.at);
+        if (nextIndex !== activeIndex) {
+          activeIndex = nextIndex;
+          renderScene(scenes[Math.max(0, activeIndex)]);
+        }
+        progress.style.width = `${Math.min(100, (elapsed / totalMs) * 100)}%`;
+        if (elapsed >= totalMs) {
+          window.__demoDone = true;
+          return;
+        }
+        requestAnimationFrame(tick);
+      }
+
+      window.startDemo = () => {
+        window.__demoDone = false;
+        startedAt = performance.now();
+        activeIndex = -1;
+        tick();
+      };
+    </script>
+  </body>
+</html>

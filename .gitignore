@@ -13,3 +13,4 @@ frontend/app/.vercel/
 data/*.json
 node_modules/
 dist/
+artifacts/

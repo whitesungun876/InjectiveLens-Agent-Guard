@@ -50,6 +50,12 @@ class InjectiveLensRequestHandler(SimpleHTTPRequestHandler):
     def do_OPTIONS(self) -> None:
         self._send_empty(HTTPStatus.NO_CONTENT)
 
+    def do_HEAD(self) -> None:
+        parsed = urlparse(self.path)
+        if self._serve_static_or_spa(parsed.path, include_body=False):
+            return
+        self._send_empty(HTTPStatus.NOT_FOUND)
+
     def do_GET(self) -> None:
         parsed = urlparse(self.path)
         params = parse_qs(parsed.query)
@@ -243,7 +249,7 @@ class InjectiveLensRequestHandler(SimpleHTTPRequestHandler):
         self.send_header("Access-Control-Allow-Headers", "Content-Type")
         self.end_headers()
 
-    def _serve_static_or_spa(self, request_path: str) -> bool:
+    def _serve_static_or_spa(self, request_path: str, *, include_body: bool = True) -> bool:
         root = _static_root()
         if root is None:
             return False
@@ -268,10 +274,10 @@ class InjectiveLensRequestHandler(SimpleHTTPRequestHandler):
             if not target.exists():
                 return False
 
-        self._send_file(target)
+        self._send_file(target, include_body=include_body)
         return True
 
-    def _send_file(self, path: Path) -> None:
+    def _send_file(self, path: Path, *, include_body: bool = True) -> None:
         payload = path.read_bytes()
         content_type = mimetypes.guess_type(path.name)[0] or "application/octet-stream"
         self.send_response(HTTPStatus.OK)
@@ -279,7 +285,8 @@ class InjectiveLensRequestHandler(SimpleHTTPRequestHandler):
         self.send_header("Content-Length", str(len(payload)))
         self.send_header("Access-Control-Allow-Origin", "*")
         self.end_headers()
-        self.wfile.write(payload)
+        if include_body:
+            self.wfile.write(payload)
 
     def _base_url(self) -> str:
         host = self.headers.get("Host")
