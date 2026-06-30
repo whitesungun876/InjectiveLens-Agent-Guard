@@ -9,8 +9,6 @@
         --ink: #16211e;
         --muted: #64746f;
         --line: #d6e4df;
-        --soft: #f3faf7;
-        --teal: #0c897b;
       }
 
       * {
@@ -66,52 +64,6 @@
         aspect-ratio: 16 / 9;
         background: #eef6f3;
       }
-
-      .meta {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-        padding: 18px;
-        border-top: 1px solid var(--line);
-        background: var(--soft);
-      }
-
-      .pill {
-        display: inline-flex;
-        align-items: center;
-        min-height: 34px;
-        padding: 7px 12px;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        background: #fff;
-        color: var(--ink);
-        font-size: 14px;
-        font-weight: 700;
-      }
-
-      .pill.primary {
-        color: #075f56;
-        border-color: #b7e0d8;
-        background: #e9f7f4;
-      }
-
-      .links {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-        justify-content: center;
-        margin-top: 24px;
-      }
-
-      a {
-        color: var(--teal);
-        font-weight: 800;
-        text-decoration: none;
-      }
-
-      a:hover {
-        text-decoration: underline;
-      }
     </style>
   </head>
   <body>
@@ -132,22 +84,7 @@
           Your browser does not support embedded playback.
           <a href="./injectivelens_demo_zh_voiceover_music.mp4">Open the Chinese narrated video file</a>.
         </video>
-        <div class="meta">
-          <span class="pill primary">Injective testnet · injective-888</span>
-          <span class="pill primary">中文旁白 + 轻钢琴 · 2:41</span>
-          <span class="pill">Pre-execution guard</span>
-          <span class="pill">Assessment proof ready</span>
-          <span class="pill">Safer alternative: 3x · 15% margin</span>
-          <span class="pill">No private key · no auto-sign · no order placement</span>
-        </div>
       </section>
-
-      <nav class="links" aria-label="Demo links">
-        <a href="/">Open Azure app</a>
-        <a href="./injectivelens_demo_zh_voiceover_music.mp4">Open 中文旁白 MP4</a>
-        <a href="./injectivelens_demo_voiceover.mp4">Open English MP4</a>
-        <a href="./injectivelens_demo.webm">Open silent WebM</a>
-      </nav>
     </main>
   </body>
 </html>
