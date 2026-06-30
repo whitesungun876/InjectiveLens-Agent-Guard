@@ -1,0 +1,43 @@
+[Script Info]
+ScriptType: v4.00+
+PlayResX: 1920
+PlayResY: 1080
+ScaledBorderAndShadow: yes
+
+[V4+ Styles]
+Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
+Style: Default,Arial Unicode MS,42,&H00FFFFFF,&H00FFFFFF,&H00000000,&H8C000000,-1,0,0,0,100,100,0,0,1,4,1,2,120,120,118,1
+
+[Events]
+Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text
+Dialogue: 0,0:00:00.00,0:00:03.62,Default,,0,0,0,,AI Agent 正在接近真实的链上金融执行。
+Dialogue: 0,0:00:03.68,0:00:12.39,Default,,0,0,0,,但在它真正下单之前，需要一层安全检查：先理解意图，绑定证据，\N识别高风险动作，再决定是否允许继续执行。
+Dialogue: 0,0:00:12.45,0:00:16.42,Default,,0,0,0,,这就是 InjectiveLens 要解决的问题。
+Dialogue: 0,0:00:17.00,0:00:23.71,Default,,0,0,0,,InjectiveLens 是 Injective 上 AI 交易 Agent 的执行前 guard。
+Dialogue: 0,0:00:23.77,0:00:26.70,Default,,0,0,0,,它不是交易机器人，也不替用户追求收益。
+Dialogue: 0,0:00:26.76,0:00:30.48,Default,,0,0,0,,它不保管私钥，不自动签名，不转账，也不直接下单。
+Dialogue: 0,0:00:30.54,0:00:34.73,Default,,0,0,0,,它只在交易动作进入执行层之前，做一次可复核的风险审查。
+Dialogue: 0,0:00:35.40,0:00:41.67,Default,,0,0,0,,这里我给 Agent 一个自然语言请求：用 60% 可用保证金，开 10 倍 INJ\N永续多单。
+Dialogue: 0,0:00:41.73,0:00:47.68,Default,,0,0,0,,Guard 会把这句话解析成结构化交易意图，包括市场、方向、\N杠杆和保证金占用。
+Dialogue: 0,0:00:47.74,0:00:54.17,Default,,0,0,0,,然后它读取配置的 Injective 证据来源，以及明确标注的 demo\Nfixture。
+Dialogue: 0,0:00:54.23,0:00:59.87,Default,,0,0,0,,页面保留网络和 proof 状态，说明这是 execution 前的 guard。
+Dialogue: 0,0:00:59.93,0:01:04.14,Default,,0,0,0,,注意，这一步仍然是执行前检查，还没有签名，也没有下单。
+Dialogue: 0,0:01:05.00,0:01:11.23,Default,,0,0,0,,结果是 BLOCK。原因不是简单地看到高杠杆就拒绝，\N而是多个信号一起触发了策略边界。
+Dialogue: 0,0:01:11.29,0:01:16.45,Default,,0,0,0,,10 倍杠杆太高， 60% 保证金占用太重，\N清算距离也不适合默认自主执行。
+Dialogue: 0,0:01:16.51,0:01:21.21,Default,,0,0,0,,页面同时显示网络、证据数量和 assessment hash 状态。
+Dialogue: 0,0:01:21.27,0:01:27.50,Default,,0,0,0,,这样这个 BLOCK 决策不是黑箱输出，而是一个可以复查的 agent\Ndecision。
+Dialogue: 0,0:01:27.56,0:01:33.95,Default,,0,0,0,,最终判断绑定 6 条证据，并生成 assessment hash，\N让这个决定可以被之后复查。
+Dialogue: 0,0:01:35.00,0:01:37.15,Default,,0,0,0,,Guard 不只是拒绝操作。
+Dialogue: 0,0:01:37.21,0:01:42.08,Default,,0,0,0,,它会解释杠杆风险、保证金风险、清算距离风险和证据覆盖缺口。
+Dialogue: 0,0:01:42.14,0:01:48.37,Default,,0,0,0,,同时，它给出一个更安全的替代方案：把杠杆降到 3 倍，\N把保证金占用降到 15%。
+Dialogue: 0,0:01:48.43,0:01:55.34,Default,,0,0,0,,每个 risk claim 都引用 evidence ID，避免只有红色警告、\N没有证据来源。
+Dialogue: 0,0:01:55.40,0:01:58.74,Default,,0,0,0,,即使是这个替代方案，也仍然要求人工确认。
+Dialogue: 0,0:02:00.00,0:02:02.20,Default,,0,0,0,,Audit 页面展示执行边界。
+Dialogue: 0,0:02:02.26,0:02:06.71,Default,,0,0,0,,Guard 允许查看证据、模拟交易、记录和验证 proof。
+Dialogue: 0,0:02:06.77,0:02:11.54,Default,,0,0,0,,但它阻止下单、自动签名、转账，以及 LLM 直接生成并执行交易。
+Dialogue: 0,0:02:11.60,0:02:15.08,Default,,0,0,0,,模型可以解释原因，边界由确定性策略强制执行。
+Dialogue: 0,0:02:15.14,0:02:23.94,Default,,0,0,0,,这里最关键的是 allowed actions 和 blocked actions 分开：\N审查可以继续，真实执行会被挡住。
+Dialogue: 0,0:02:25.00,0:02:27.89,Default,,0,0,0,,Proof 部分生成 assessment hash。
+Dialogue: 0,0:02:27.95,0:02:33.04,Default,,0,0,0,,它证明的是 guard assessment record，不是交易收益，\N也不是已经下单。
+Dialogue: 0,0:02:33.10,0:02:34.64,Default,,0,0,0,,记录和验证都需要明确确认。
+Dialogue: 0,0:02:35.50,0:02:40.44,Default,,0,0,0,,InjectiveLens：让 AI 交易 Agent 在链上执行前，先被安全审查。
